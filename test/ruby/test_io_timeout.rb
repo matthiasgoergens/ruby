@@ -4,10 +4,8 @@ require 'io/nonblock'
 
 class TestIOTimeout < Test::Unit::TestCase
   def with_pipe
-    omit "UNIXSocket is not defined!" unless defined?(UNIXSocket)
-
     begin
-      i, o = UNIXSocket.pair
+      i, o = IO.pipe
 
       yield i, o
     ensure
@@ -35,6 +33,16 @@ class TestIOTimeout < Test::Unit::TestCase
       i.timeout = 0.0001
 
       assert_raise(IO::TimeoutError) {i.read}
+    end
+  end
+
+  def test_timeout_read_preserves_buffered_data
+    with_pipe do |i, o|
+      o.write("Hello")
+      i.timeout = 0.0001
+
+      assert_raise(IO::TimeoutError) {i.read}
+      assert_equal "Hello", i.read_nonblock(5)
     end
   end
 
