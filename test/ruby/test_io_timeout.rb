@@ -1,11 +1,14 @@
 # frozen_string_literal: false
 
 require 'io/nonblock'
+require 'socket'
 
 class TestIOTimeout < Test::Unit::TestCase
   def with_pipe
+    omit "UNIXSocket is not defined!" unless defined?(UNIXSocket)
+
     begin
-      i, o = IO.pipe
+      i, o = UNIXSocket.pair
 
       yield i, o
     ensure
@@ -38,11 +41,12 @@ class TestIOTimeout < Test::Unit::TestCase
 
   def test_timeout_read_preserves_buffered_data
     with_pipe do |i, o|
-      o.write("Hello")
+      data = "Hello" * 4_000
+      o.write(data)
       i.timeout = 0.0001
 
       assert_raise(IO::TimeoutError) {i.read}
-      assert_equal "Hello", i.read_nonblock(5)
+      assert_equal data, i.read_nonblock(data.bytesize)
     end
   end
 
