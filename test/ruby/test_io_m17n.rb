@@ -1032,6 +1032,33 @@ EOT
          end)
   end
 
+  def test_set_encoding_enc_with_newline_option
+    pipe(proc do |w|
+           w.write("line1\r\nline2\r\n")
+           w.close
+         end,
+         proc do |r|
+           r.set_encoding(Encoding::UTF_8, newline: :universal)
+           assert_equal("line1\nline2\n", r.read)
+         end)
+
+    pipe(proc do |w|
+           w.set_encoding(Encoding::UTF_8, newline: :crlf)
+           w.write("line1\nline2\n")
+           w.close
+         end,
+         proc do |r|
+           r.binmode
+           assert_equal("line1\r\nline2\r\n", r.read)
+         end)
+
+    File.open(File::NULL) do |f|
+      assert_raise(ArgumentError) do
+        f.set_encoding(Encoding::UTF_8, newline: :invalid)
+      end
+    end
+  end
+
   def test_set_encoding_invalid
     pipe(proc do |w|
            w << "\x80"

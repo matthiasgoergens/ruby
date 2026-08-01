@@ -11824,7 +11824,7 @@ io_encoding_set(rb_io_t *fptr, VALUE v1, VALUE v2, VALUE opt)
             else {
                 rb_io_ext_int_to_encs(find_encoding(v1), NULL, &enc, &enc2, 0);
                 SET_UNIVERSAL_NEWLINE_DECORATOR_IF_ENC2(enc2, ecflags);
-                ecopts = Qnil;
+                ecflags = rb_econv_prepare_options(opt, &ecopts, ecflags);
             }
         }
     }
