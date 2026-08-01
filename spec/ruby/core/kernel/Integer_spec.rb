@@ -125,6 +125,17 @@ describe "Kernel#Integer" do
   end
 
   describe "when passed exception: false" do
+    describe "and to_int returns a value that is not an Integer" do
+      it "raises a TypeError" do
+        obj = mock("object")
+        obj.should_receive(:to_int).and_return("1")
+        obj.should_not_receive(:to_str)
+        -> {
+          Integer(obj, exception: false)
+        }.should raise_consistent_error(TypeError, "can't convert MockObject into Integer (MockObject#to_int gives String)")
+      end
+    end
+
     describe "and to_i returns a value that is not an Integer" do
       it "swallows an error" do
         obj = mock("object")

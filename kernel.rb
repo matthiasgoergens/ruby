@@ -271,8 +271,9 @@ module Kernel
   # - Raises TypeError if +object+ is +nil+.
   # - Raises ArgumentError if +object+ is an invalid string.
   #
-  # With +exception+ given as +false+, an exception of any kind is suppressed
-  # and +nil+ is returned.
+  # With +exception+ given as +false+, conversion failures are suppressed and
+  # +nil+ is returned. A TypeError is still raised if +to_int+ or +to_str+
+  # returns an object of the wrong type.
   #
   def Integer(arg, base = 0, exception: true)
     if Primitive.mandatory_only?

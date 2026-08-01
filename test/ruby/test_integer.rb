@@ -205,6 +205,12 @@ class TestInteger < Test::Unit::TestCase
       def o.to_int; raise; end
       assert_equal(nil, Integer(o, exception: false))
     }
+    o = Object.new
+    def o.to_int; "1"; end
+    def o.to_str; "2"; end
+    assert_raise(TypeError, "[Bug #22080]") {
+      Integer(o, exception: false)
+    }
     assert_nothing_raised(FloatDomainError) {
       assert_equal(nil, Integer(Float::INFINITY, exception: false))
     }
