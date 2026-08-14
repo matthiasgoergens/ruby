@@ -1234,7 +1234,8 @@ ivar_ractor_check(VALUE obj, ID id)
         UNLIKELY(!rb_ractor_main_p()) &&
         UNLIKELY(rb_ractor_shareable_p(obj))) {
 
-        rb_raise(rb_eRactorIsolationError, "can not access instance variables of shareable objects from non-main Ractors");
+        rb_raise(rb_eRactorIsolationError,
+                 "can not access instance variables of this non-frozen shareable object from a non-main Ractor");
     }
 }
 

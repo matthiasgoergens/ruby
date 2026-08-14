@@ -888,7 +888,7 @@ assert_equal "can not get unshareable values from instance variables of classes/
 RUBY
 
 # ivar in shareable-objects are not allowed to access from non-main Ractor
-assert_equal 'can not access instance variables of shareable objects from non-main Ractors', %q{
+assert_equal 'can not access instance variables of this non-frozen shareable object from a non-main Ractor', %q{
   shared = Ractor.new{}
   shared.instance_variable_set(:@iv, 'str')
 
@@ -904,7 +904,7 @@ assert_equal 'can not access instance variables of shareable objects from non-ma
 }
 
 # ivar in shareable-objects are not allowed to access from non-main Ractor, by @iv (get)
-assert_equal 'can not access instance variables of shareable objects from non-main Ractors', %q{
+assert_equal 'can not access instance variables of this non-frozen shareable object from a non-main Ractor', %q{
   class Ractor
     def setup
       @foo = ''
@@ -930,7 +930,7 @@ assert_equal 'can not access instance variables of shareable objects from non-ma
 }
 
 # ivar in shareable-objects are not allowed to access from non-main Ractor, by @iv (set)
-assert_equal 'can not access instance variables of shareable objects from non-main Ractors', %q{
+assert_equal 'can not access instance variables of this non-frozen shareable object from a non-main Ractor', %q{
   class Ractor
     def setup
       @foo = ''

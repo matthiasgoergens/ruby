@@ -417,7 +417,7 @@ end
 begin
   r.join
 rescue Ractor::RemoteError => e
-  e.cause.message #=> can not access instance variables of shareable objects from non-main Ractors (Ractor::IsolationError)
+  e.cause.message #=> can not access instance variables of this non-frozen shareable object from a non-main Ractor (Ractor::IsolationError)
 end
 ```
 
