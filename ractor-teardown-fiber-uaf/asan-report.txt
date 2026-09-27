@@ -1,0 +1,95 @@
+`RubyGems' were not loaded.
+`RubyGems' were not loaded.
+.........=================================================================
+==262468==ERROR: AddressSanitizer: heap-use-after-free on address 0x7c714440af08 at pc 0x564ce656e21a bp 0x7b01238a4780 sp 0x7b01238a4778
+READ of size 8 at 0x7c714440af08 thread T4367
+    #0 0x564ce656e219 in rb_current_ractor_raw /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_core.h:2256:33
+    #1 0x564ce656e219 in rb_current_ractor /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_core.h:2263:12
+    #2 0x564ce656e219 in vm_locked /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/vm_sync.c:16:38
+    #3 0x564ce656e219 in rb_vm_lock_enter_body /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/vm_sync.c:162:9
+    #4 0x564ce6143374 in rb_vm_lock_enter /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_sync.h:80:9
+    #5 0x564ce6143374 in rb_gc_objspace_retire /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/gc.c:4314:5
+    #6 0x564ce62cf1b7 in vm_remove_ractor /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ractor.c:702:13
+    #7 0x564ce62cf1b7 in rb_ractor_living_threads_remove /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ractor.c:1115:9
+    #8 0x564ce646bdb1 in thread_start_func_2 /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/thread.c:881:9
+    #9 0x564ce646a487 in call_thread_start_func_2 /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./thread_sched.c:1974:5
+    #10 0x564ce646a487 in nt_start /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./thread_sched.c:2014:9
+    #11 0x564ce5fc4cf2 in asan_thread_start(void*) asan_interceptors.cpp.o
+    #12 0x7f01450980a1 in start_thread /usr/src/debug/glibc/glibc/nptl/pthread_create.c:454:8
+    #13 0x7f014512080b in __GI___clone3 /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+0x7c714440af08 is located 136 bytes inside of 664-byte region [0x7c714440ae80,0x7c714440b118)
+freed by thread T0 here:
+    #0 0x564ce60aa511 in free.part.0 asan_malloc_linux.cpp.o
+    #1 0x564ce6152c00 in rb_gc_impl_free /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./gc/default/default.c:11849:9
+    #2 0x564ce6152c00 in ruby_xfree_sized /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/gc.c:6513:13
+
+previously allocated by thread T0 here:
+    #0 0x564ce60ab899 in calloc (/home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ruby+0x2a3899) (BuildId: c5fd8952e62819baaa11c3f20beccfa98475a1d7)
+    #1 0x564ce61524ba in calloc1 /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./gc/default/default.c:2123:12
+    #2 0x564ce61524ba in rb_gc_impl_calloc /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./gc/default/default.c:11885:29
+    #3 0x564ce61524ba in ruby_xcalloc_body /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/gc.c:6427:12
+    #4 0x564ce61524ba in ruby_xcalloc /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/gc.c:6421:34
+    #5 0x564ce62ddede in ractor_create /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ractor.c:910:5
+    #6 0x564ce64d83db in invoke_bf /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_insnhelper.c:7758:17
+    #7 0x564ce64d83db in vm_invoke_builtin /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_insnhelper.c:7766:12
+    #8 0x564ce64d83db in vm_exec_core /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/insns.def:1727:11
+    #9 0x564ce64d04ce in rb_vm_exec /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/vm.c:2901:22
+    #10 0x564ce610c00c in rb_ec_exec_node /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/eval.c:300:9
+    #11 0x564ce610bcd4 in ruby_run_node /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/eval.c:338:30
+    #12 0x7f0145027780 in __libc_start_call_main /usr/src/debug/glibc/glibc/csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #13 0x7f01450278b8 in __libc_start_main /usr/src/debug/glibc/glibc/csu/../csu/libc-start.c:372:3
+    #14 0x564ce5f92e14 in _start (/home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ruby+0x18ae14) (BuildId: c5fd8952e62819baaa11c3f20beccfa98475a1d7)
+
+Thread T4367 created by T0 here:
+    #0 0x564ce60a0f24 in pthread_create (/home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ruby+0x298f24) (BuildId: c5fd8952e62819baaa11c3f20beccfa98475a1d7)
+    #1 0x564ce644c7db in native_thread_create0 /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./thread_pthread.c:818:11
+    #2 0x564ce644c7db in native_thread_create_dedicated /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./thread_sched.c:1953:15
+    #3 0x564ce644c7db in native_thread_create /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./thread_sched.c:2314:16
+    #4 0x564ce644c7db in thread_create_core /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/thread.c:1005:11
+    #5 0x564ce644d7e1 in rb_thread_create_ractor /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/thread.c:1207:17
+    #6 0x564ce62ddede in ractor_create /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ractor.c:910:5
+    #7 0x564ce64d83db in invoke_bf /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_insnhelper.c:7758:17
+    #8 0x564ce64d83db in vm_invoke_builtin /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_insnhelper.c:7766:12
+    #9 0x564ce64d83db in vm_exec_core /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/insns.def:1727:11
+    #10 0x564ce64d04ce in rb_vm_exec /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/vm.c:2901:22
+    #11 0x564ce610c00c in rb_ec_exec_node /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/eval.c:300:9
+    #12 0x564ce610bcd4 in ruby_run_node /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/eval.c:338:30
+    #13 0x7f0145027780 in __libc_start_call_main /usr/src/debug/glibc/glibc/csu/../sysdeps/nptl/libc_start_call_main.h:59:16
+    #14 0x7f01450278b8 in __libc_start_main /usr/src/debug/glibc/glibc/csu/../csu/libc-start.c:372:3
+    #15 0x564ce5f92e14 in _start (/home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/ruby+0x18ae14) (BuildId: c5fd8952e62819baaa11c3f20beccfa98475a1d7)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /home/matthias/prog/low-hanging-fruit/worktrees/ruby-master-asan/./vm_core.h:2256:33 in rb_current_ractor_raw
+Shadow bytes around the buggy address:
+  0x7c714440ac80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7c714440ad00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x7c714440ad80: 00 fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7c714440ae00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7c714440ae80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+=>0x7c714440af00: fd[fd]fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x7c714440af80: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x7c714440b000: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x7c714440b080: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x7c714440b100: fd fd fd fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x7c714440b180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==262468==ABORTING
+AddressSanitizer: nested bug in the same thread, aborting.

@@ -1,0 +1,32 @@
+diff --git a/ractor.c b/ractor.c
+index c68b5f9d0e..f796391b58 100644
+--- a/ractor.c
++++ b/ractor.c
+@@ -672,6 +672,15 @@ vm_remove_ractor(rb_vm_t *vm, rb_ractor_t *cr)
+                        vm->ractor.cnt,  vm->ractor.sync.terminate_waiting);
+ 
+         VM_ASSERT(vm->ractor.cnt > 0);
++
++        /* Retire the objspace while this Ractor is still in vm->ractor.set:
++         * rb_gc_mark_local_roots() only marks a Ractor's threads for Ractors
++         * still in the set, so unlinking first lets a concurrent GC free the
++         * dying thread's fiber (which embeds its EC) while it still runs. */
++        if (cr->objspace) {
++            rb_gc_objspace_retire(&cr->objspace);
++        }
++
+         ccan_list_del(&cr->vmlr_node);
+ 
+         /* A single-objspace impl has no zombie_objspaces, so nothing roots the
+@@ -696,11 +705,6 @@ vm_remove_ractor(rb_vm_t *vm, rb_ractor_t *cr)
+          * Ractors read rb_gc_single_objspace_p lock-free, and the other order opens a
+          * cnt==1-no-zombie window where a GC skips shareable pinning and collects
+          * objects (a cc, say) reachable only through this objspace. */
+-        if (cr->objspace) {
+-            /* The final self collection already ran (ractor_postmortem_collect),
+-             * so the entry measures exactly the pages the joiner will inherit. */
+-            rb_gc_objspace_retire(&cr->objspace);
+-        }
+         vm->ractor.cnt--;
+ 
+         ractor_status_set(cr, ractor_terminated);
